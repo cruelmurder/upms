@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hshc.upms.dao.security.UserMapper">
+
+	<resultMap id="userResultMap" type="securityUser">
+		<id property="id" column="SU_ID" />
+		<id property="account" column="SU_ACCOUNT" />
+		<id property="name" column="SU_NAME" />
+		<id property="email" column="SU_EMAIL" />
+		<id property="password" column="SU_PASSWORD" />
+		<id property="adminFlag" column="SU_ADMIN_FLAG" />
+		<id property="extension" column="su_extension" />
+		<id property="segment" column="su_segment" />
+		<id property="active" column="su_active" />
+		<id property="remark" column="su_remark" />
+		<id property="lspCode" column="su_lsp_code" />
+		<id property="domain" column="su_domain" />
+		<id property="roles" column="su_roles" />
+		<id property="title" column="su_title" />
+		<id property="isEmployee" column="su_is_employee" />
+		<id property="managerEmail" column="su_manager_email" />
+		<id property="enabled" column="su_enabled" />
+		<id property="timezone" column="su_timezone" />
+		<id property="language" column="su_language" />
+		<id property="defaultBuid" column="su_default_buid" />
+		<id property="countryCode" column="su_country_code" />
+		<id property="defaultAreaCode" column="su_default_area_code" />
+		<id property="lastLoginDate" column="last_login_date" />
+		<id property="hasChangedPswd" column="has_changed_pswd" />
+		<id property="invalidAttampts" column="invalid_attampts" />
+		<id property="lockoutTime" column="lockout_time" />
+		<id property="rfLoginCount" column="rf_login_count" />
+		<id property="loginStatus" column="login_status" />
+		<id property="telephoneNum" column="telephone_num" />
+		<id property="sex" column="sex" />
+		<id property="weixin_no" column="weixinNo" />
+		<id property="effectDate" column="effect_date" />
+		<id property="expireDate" column="expire_date" />
+		<association property="position"  javaType="securityPosition" select="com.hshc.upms.dao.security.PositionMapper.queryByUserId" column="su_id"/>
+		<collection property="userOrganlist" column="su_id" select="com.hshc.upms.dao.mdm.MstOrganCompanyMapper.queryListByUserId">
+        </collection>
+	</resultMap>
+
+	<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="securityUser">
+		<include refid="insertEntityHeadSql" />
+		(#{account},#{name},#{email},#{password},#{adminFlag},#{insertBy},#{insertDate})
+	</insert>
+	<!-- 插入用户机构 -->
+	<insert id="createUserOrg" parameterType="map">
+		insert into security_user_org(user_id,org_id,type) values
+			(#{userId},#{orgId},#{type})
+	</insert>
+	<!-- 插入用户岗位 -->
+	<insert id="createUserPost" parameterType="map">
+		insert into security_user_position(user_id,post_id) values
+		(#{userId},#{postId})
+	</insert>
+	<!-- 更新实体 -->
+	<update id="updateEntity" parameterType="securityUser">
+		update SECURITY_USER
+		<set>
+			<if test="account!=null">SU_ACCOUNT=#{account},</if>
+			<if test="name!=null">SU_NAME=#{name},</if>
+			<if test="email!=null">SU_EMAIL=#{email},</if>
+			<if test="password!=null">SU_PASSWORD=#{password},</if>
+			<if test="adminFlag!=null">SU_ADMIN_FLAG=#{adminFlag},</if>
+			<if test="modifiedBy!=null">modified_by=#{modifiedBy},</if>
+			<if test="modifiedDate!=null">modified_date=#{modifiedDate},</if>
+			<if test="active!=null">su_active=#{active}</if>
+		</set>
+		where SU_ID=#{id}
+	</update>
+
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="securityUser"
+		resultMap="userResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+
+	<!-- 根据map参数查询列表 -->
+	<select id="queryListByMap" resultMap="userResultMap">
+		<include refid="queryEntityHeadSql" />
+		FROM SECURITY_USER SU
+		<where>
+			<!-- 自定义查询条件 -->
+		</where>
+	</select>
+
+	<!-- 根据ID删除实体 -->
+	<delete id="deleteById" parameterType="long">
+		DELETE FROM SECURITY_USER
+		where SU_ID=#{id}
+	</delete>
+	
+	<!-- 根据对象删除实体，此方法可以根据自己需求实现 -->
+	<delete id="deleteByObject" parameterType="securityUser">
+		<!-- 自定义删除条件 -->
+	</delete>
+	<delete id="deleteUserOrgByUserId" parameterType="long">
+		DELETE FROM security_user_org
+		where user_id=#{userId}
+	</delete>
+	<delete id="deleteUserPostByUserId" parameterType="long">
+		DELETE FROM security_user_position
+		where user_id=#{userId}
+	</delete>
+	<!-- 根据ID查出实体 -->
+	<select id="queryById" parameterType="long" resultMap="userResultMap">
+		SELECT *
+		FROM SECURITY_USER SU where SU.SU_ID=#{id}
+	</select>
+
+	<!-- 根据ID查出实体 -->
+	<select id="queryByEntity" parameterType="securityUser"
+		resultMap="userResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="securityUser"
+		resultMap="userResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<!-- and SU.SU_ENABLED = 1 -->
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="securityUser"
+		resultType="long">
+		select count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+	<!-- 自提收货判断用户是否有权限 -->
+	<select id="validateUserPermission" resultType="String">
+		SELECT SP.PERMISSION
+		FROM SECURITY_USER SU,SECURITY_USER_ROLE SUR ,SECURITY_ROLE_PERMISSION SRP
+		,SECURITY_PERMISSION SP
+		WHERE SUR.SR_ID = SRP.SR_ID AND SU.SU_ID = SUR.SU_ID AND SP.SP_ID =
+		SRP.SP_ID
+		AND SP.PERMISSION= 'tms:selfsite:force'
+		AND SU.SU_ID = #{suId}
+	</select>
+
+	<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+		INSERT INTO
+		SECURITY_USER(SU_ACCOUNT,SU_NAME,SU_EMAIL,SU_PASSWORD,SU_ADMIN_FLAG,insert_by,insert_date)
+		values
+	</sql>
+
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT
+		SU.SU_ACCOUNT,SU.SU_ID,SU.SU_NAME,SU.SU_EMAIL,SU.SU_PASSWORD,SU.SU_ADMIN_FLAG,SU.su_extension,SU.su_segment,SU.su_active,SU.su_remark,SU.su_lsp_code,SU.su_domain,SU.su_roles,
+		SU.su_title,SU.su_is_employee,SU.su_manager_email,SU.su_enabled,SU.su_timezone,SU.su_language,SU.su_default_buid,SU.su_country_code,SU.su_default_area_code,SU.last_login_date,SU.has_changed_pswd,
+		SU.has_changed_pswd,SU.invalid_attampts,SU.lockout_time,SU.rf_login_count,SU.login_status,SU.telephone_num,SU.sex,SU.effect_date,SU.expire_date,SU.employee_no,SU.weixin_no
+	</sql>
+
+
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM SECURITY_USER SU  
+		<where>
+			<if test="id!=null and id!=''">
+				and SU.SU_ID= #{id}
+			</if>
+			<if test="account!=null and account!=''">
+				and SU.SU_ACCOUNT = #{account}
+			</if>
+			<if test="name!=null and name!=''">
+				and SU.SU_NAME like  CONCAT('%', #{name},'%')
+			</if>
+
+			<if test="email!=null and email!=''">
+				and SU.SU_EMAIL= #{email}
+			</if>
+			<if test="password!=null and password!=''">
+				and SU.SU_PASSWORD= #{password}
+			</if>
+
+			<if test="enabled!=null">
+				and SU.SU_ENABLED = #{enabled}
+			</if>
+			<if test="enabled!=null">
+				and SU.weixin_no = #{weixinNo}
+			</if>
+		</where>
+	</sql>
+
+	<!--用户管理：批量删除 -->
+	<update id="deleteByIds" parameterType="java.util.Map">
+		UPDATE SECURITY_USER SET SU_ENABLED = 0 WHERE SU_ID in
+		<foreach item="item" collection="ids" open="(" separator=","
+			close=")">
+			#{item}
+		</foreach>
+	</update>
+
+	<!-- 账户激活 -->
+	<update id="updateById" parameterType="java.util.Map">
+		UPDATE SECURITY_USER SET SU_ENABLED = 1 WHERE SU_ID in
+		<foreach item="item" collection="ids" open="(" separator=","
+			close=")">
+			#{item}
+		</foreach>
+	</update>
+	
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hshc.upms.dao.mdm.MstRegionMapper">
+
+	<resultMap id="mstRegionResultMap" type="mstRegion">
+		<id property="id" column="ID" />
+		<id property="parentId" column="PARENT_ID" />
+		<id property="code" column="CODE" />
+		<id property="name" column="NAME" />
+		<id property="cityLevel" column="CETY_LEVEL" />
+		
+		<!-- 
+		<collection property="childRegionList" select="queryChildEntiyByParentId" column="id"></collection>
+		 -->
+	</resultMap>
+	<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+	        INSERT INTO T_MST_REGION (PARENT_ID,CODE,NAME,CITY_LEVEL)VALUES
+	</sql>
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT ID,PARENT_ID,CODE,NAME,CITY_LEVEL
+	</sql>
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM T_MST_REGION
+		<where>
+			<if test="parentId!=null and parentId!=''">
+				and PARENT_ID= #{parentId}
+			</if>
+		</where>
+	</sql>
+	<!-- 子查询实体条件 -->
+	<sql id="queryChildrenEntityCriteriaSql">
+		FROM T_MST_REGION
+		<where>
+			<if test="_parameter!=null and _parameter!=''">
+				and PARENT_ID= #{_parameter}
+			</if>
+		</where>
+	</sql>
+	<!-- 查询实体条件 -->
+	<sql id="queryParentEntityCriteriaSql">
+		FROM T_MST_REGION
+	</sql>
+	<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstRegion" useGeneratedKeys="true" keyProperty="id">
+		<include refid="insertEntityHeadSql" />
+		(#{parentId},#{code},#{name},#{cityLevel},#{area})
+	</insert>	
+	<delete id="deleteByIds" parameterType="java.util.Map">
+		DELETE FROM T_MST_REGION WHERE ID in 
+		<foreach item="item" collection="ids" open="(" separator=","
+			close=")">
+			#{item}
+		</foreach>
+	</delete>
+	<update id="updateEntity" parameterType="mstRegion">
+		update T_MST_REGION
+		<set>
+			<if test="type!=null">CODE=#{code},</if>
+			<if test="status!=null">NAME=#{name},</if>
+			<if test="name!=null">CITY_LEVEL=#{cityLevel},</if>
+		</set>
+		where ID=#{id}
+	</update>
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="mstRegion"
+		resultMap="mstRegionResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+	<!-- 根据实体查询父级列表 -->
+	<select id="queryAllListByEntity" parameterType="mstRegion"
+		resultMap="mstRegionResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryParentEntityCriteriaSql" />
+	</select>
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="mstRegion"
+		resultMap="mstRegionResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+	<!-- 子查询 -->	
+	<select id="queryChildEntiyByParentId" parameterType="int" resultMap="mstRegionResultMap"> 
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryChildrenEntityCriteriaSql" />
+	</select>
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="mstRegion"
+		resultType="long">
+		select count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+	</select>
+
+</mapper>

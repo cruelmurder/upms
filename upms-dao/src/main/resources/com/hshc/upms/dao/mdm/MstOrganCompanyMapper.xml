@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hshc.upms.dao.mdm.MstOrganCompanyMapper">
+
+	<resultMap id="mstOrganCompanyResultMap" type="mstOrganCompany">
+		<id property="id" column="ID" />
+		<id property="parentId" column="PARENT_ID" />
+		<id property="code" column="CODE" />
+		<id property="name" column="NAME" />
+		<id property="alias" column="ALIAS" />
+		<id property="province" column="PROVINCE" />
+		<id property="city" column="CITY" />
+		<id property="county" column="COUNTY" />
+		<id property="detailAddress" column="DETAIL_ADDRESS" />
+		<id property="status" column="STATUS" />
+		<id property="level" column="LEVEL" />
+		<id property="fullAddress" column="FULL_ADDRESS" />
+		<id property="insertDate" column="CREATE_DATE" />
+		<id property="modifiedDate" column="UPDATE_DATE" />
+		<id property="insertBy" column="CREATE_USER" />
+		<id property="modifiedBy" column="UPDATE_USER" />
+		<id property="area" column="AREA" />
+		<id property="areaName" column="AREA_NAME" />
+		<id property="organNo" column="ORGAN_NO" />
+		<id property="telNo" column="TEL_NO" />
+		<id property="registName" column="REGIST_NAME" />
+		<id property="registDate" column="REGIST_DATE" />
+		<id property="isThirdparty" column="is_thirdparty" />
+		<id property="orgType" column="org_type" />
+	</resultMap>
+	<!-- 创建实体头部 -->
+	<sql id="insertEntityHeadSql">
+	        INSERT INTO MST_ORGANCOMPANY (PARENT_ID,CODE,NAME,CITY_LEVEL,AREA,CREATE_DATE,UPDATE_DATE,CREATE_USER,UPDATE_USER)VALUES
+	</sql>
+	<!-- 查询实体头部 -->
+	<sql id="queryEntityHeadSql">
+		SELECT A.ID,A.PARENT_ID,A.CODE,A.NAME,A.ALIAS,A.PROVINCE,A.CITY,A.COUNTY,A.DETAIL_ADDRESS,A.STATUS,A.LEVEL,A.CREATE_USER,A.UPDATE_USER,A.CREATE_TIME,A.UPDATE_TIME
+	</sql>
+	<!-- 查询实体头部附带省市县拼接地址 -->
+	<sql id="queryEntityHeadSqlWithFullAddress">
+		,CONCAT(B.NAME, C.NAME, D.NAME) AS FULL_ADDRESS
+	</sql>
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSql">
+		FROM T_MST_ORGANIZATION A
+	</sql>
+	<!-- 查询实体头部附带省市县拼接地址的条件 -->
+	<sql id="queryEntityHeadSqlLeftJoinTable">
+		LEFT JOIN T_MST_REGION B ON A.PROVINCE = B.ID LEFT JOIN T_MST_REGION C ON A.CITY = C.ID LEFT JOIN T_MST_REGION D ON A.COUNTY = D.ID
+	</sql>
+	<!-- 查询实体条件 -->
+	<sql id="queryEntityCriteriaSqlWhereClause">
+		<where>
+			<if test="null != parentId">and A.PARENT_ID= #{parentId}</if>
+		</where>
+	</sql>
+	<sql id="queryEntityCriteriaSqlFirstLevel">
+		WHERE A.LEVEL='1'
+	</sql>
+	<update id="deleteByIds" parameterType="map">
+		update T_MST_ORGANIZATION
+		set STATUS = '0'
+		<set>
+			<if test="modifiedDate!=null">UPDATE_DATE=#{modifiedDate},</if>			
+			<if test="modifiedBy!=null">UPDATE_USER=#{modifiedBy}</if>
+		</set>
+		where ID in
+		<foreach item="item" collection="ids" open="(" separator=","
+			close=")">
+			#{item}
+		</foreach>
+	</update>
+	<update id="updateEntity" parameterType="mstOrganCompany">
+		update T_MST_ORGANIZATION
+		<set>
+			<if test="code!=null">CODE=#{code},</if>
+			<if test="name!=null">NAME=#{name},</if>
+			<if test="alias!=null">ALIAS=#{alias},</if>
+			<if test="province!=null">PROVINCE=#{province}</if>
+			<if test="city!=null">CITY=#{city}</if>
+			<if test="county!=null">COUNTY=#{county}</if>
+			<if test="detailAddress!=null">DETAIL_ADDRESS=#{detailAddress}</if>
+			<if test="status!=null">STATUS=#{status}</if>
+			<if test="level!=null">LEVEL=#{level}</if>
+			<if test="insertDate != null">CREATE_DATE=#{insertDate}</if>
+			<if test="modifiedDate!=null">UPDATE_DATE=#{modifiedDate}</if>
+			<if test="insertBy!=null">CREATE_USER=#{insertBy}</if>
+			<if test="modifiedBy!=null">UPDATE_USER=#{modifiedBy}</if>
+		</set>
+		where ID=#{id}
+	</update>
+	<update id="updateNode" parameterType="mstOrganCompany">
+	     UPDATE T_MST_ORGANIZATION 
+	     SET
+	       CODE = #{mstOrganCompany.code},
+	       NAME = #{mstOrganCompany.name},
+	       ALIAS=#{mstOrganCompany.alias},
+	       PROVINCE=#{mstOrganCompany.province},
+	       CITY=#{mstOrganCompany.city},
+	       COUNTY=#{mstOrganCompany.county},
+	       DETAIL_ADDRESS=#{mstOrganCompany.detailAddress},
+	       STATUS=#{mstOrganCompany.status},
+	       LEVEL=#{mstOrganCompany.level},
+	       UPDATE_TIME =#{mstOrganCompany.modifiedDate},
+	       UPDATE_USER =#{mstOrganCompany.modifiedBy}
+	     WHERE ID=#{mstOrganCompany.id}
+	</update>
+	<insert id="addNode" parameterType="com.hshc.mdm.entity.mst.MstOrganCompany">
+      INSERT INTO T_MST_ORGANIZATION (PARENT_ID,CODE,NAME,ALIAS,PROVINCE,CITY,COUNTY,DETAIL_ADDRESS,STATUS,LEVEL,CREATE_TIME,UPDATE_TIME,CREATE_USER,UPDATE_USER)VALUES
+	  (
+	  	#{mstOrganCompany.parentId},
+	  	#{mstOrganCompany.code},
+	  	#{mstOrganCompany.name},
+	  	#{mstOrganCompany.alias},
+	  	#{mstOrganCompany.province},
+	  	#{mstOrganCompany.city},
+	  	#{mstOrganCompany.county},
+	  	#{mstOrganCompany.detailAddress},
+	  	#{mstOrganCompany.status},
+	  	#{mstOrganCompany.level},
+	  	now(),
+	  	now(),
+	  	#{mstOrganCompany.insertBy},
+	  	#{mstOrganCompany.modifiedBy}
+	  )
+	</insert>
+	<!-- 创建实体 -->
+	<insert id="createEntity" parameterType="mstOrganCompany" useGeneratedKeys="true" keyProperty="id">
+		<include refid="insertEntityHeadSql" />
+		(#{parentId},#{code},#{name},#{cityLevel},#{area},#{insertDate},#{modifiedDate},#{insertBy},#{modifiedBy})
+	</insert>	
+	<!-- 根据实体查询列表 -->
+	<select id="queryById" parameterType="int"
+		resultMap="mstOrganCompanyResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		where id=#{id}
+	</select>
+	<select id="getMstOrganCompanyList" resultMap="mstOrganCompanyResultMap" parameterType="Date">
+		SELECT A.ID,A.PARENT_ID,A.CODE,A.NAME,A.ALIAS,A.PROVINCE,A.CITY,A.COUNTY,A.DETAIL_ADDRESS,A.STATUS,A.LEVEL,A.CREATE_USER,A.UPDATE_USER,A.CREATE_TIME,A.UPDATE_TIME
+		FROM T_MST_ORGANIZATION A
+		<where>
+			<if test="null != updateTime">and A.UPDATE_TIME > #{updateTime}</if>
+		</where>
+	</select>
+	<!-- 根据实体查询列表 -->
+	<select id="getRootList" parameterType="mstOrganCompany"
+		resultMap="mstOrganCompanyResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityHeadSqlWithFullAddress" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="queryEntityHeadSqlLeftJoinTable" />
+		<include refid="queryEntityCriteriaSqlFirstLevel" />
+	</select>
+	<select id="getChildNodeList" resultMap="mstOrganCompanyResultMap">
+		<include refid="queryEntityHeadSql" />
+		,CONCAT(B.NAME, C.NAME, D.NAME) AS FULL_ADDRESS
+		FROM T_MST_ORGANIZATION A
+		LEFT JOIN T_MST_REGION B ON A.PROVINCE = B.ID LEFT JOIN T_MST_REGION C ON A.CITY = C.ID LEFT JOIN T_MST_REGION D ON A.COUNTY = D.ID
+		WHERE  A.PARENT_ID= #{parentId}
+	</select>
+	<select id="getNode" resultMap="mstOrganCompanyResultMap">
+		<include refid="queryEntityHeadSql" />
+		,CONCAT(B.NAME, C.NAME, D.NAME) AS FULL_ADDRESS
+		FROM T_MST_ORGANIZATION A
+		LEFT JOIN T_MST_REGION B ON A.PROVINCE = B.ID LEFT JOIN T_MST_REGION C ON A.CITY = C.ID LEFT JOIN T_MST_REGION D ON A.COUNTY = D.ID
+		WHERE  A.ID= #{id}
+	</select>
+		
+	<!-- 根据实体查询列表 -->
+	<select id="queryListByEntity" parameterType="mstOrganCompany"
+		resultMap="mstOrganCompanyResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="queryEntityCriteriaSqlWhereClause" />
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="pageQueryEntity" parameterType="mstOrganCompany"
+		resultMap="mstOrganCompanyResultMap">
+		<include refid="queryEntityHeadSql" />
+		<include refid="queryEntityHeadSqlWithFullAddress" />
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="queryEntityHeadSqlLeftJoinTable" />
+		<include refid="queryEntityCriteriaSqlWhereClause" />
+		<include refid="Common.mysqlPageineSql" />
+	</select>
+
+	<!-- 统计结果 -->
+	<select id="pageQueryEntityCount" parameterType="mstOrganCompany"
+		resultType="long">
+		select count(1) as num
+		<include refid="queryEntityCriteriaSql" />
+		<include refid="queryEntityCriteriaSqlWhereClause" />
+	</select>
+	<!-- 用户所属机构 -->
+	<select id="queryListByUserId" parameterType="long" resultMap="mstOrganCompanyResultMap">  
+		select org.*,userOrg.type as org_type from t_mst_organization org
+			left join security_user_org userOrg
+			on org.id=userOrg.org_id
+			where userOrg.user_id=#{userId}
+	</select>
+
+	
+</mapper>

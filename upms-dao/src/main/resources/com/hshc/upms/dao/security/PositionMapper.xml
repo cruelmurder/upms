@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hshc.upms.dao.security.PositionMapper">
+    
+     <resultMap id="positionResultMap" type="securityPosition">
+		<id property="id" column="ID" />
+		<id property="positionName" column="POST_NAME" />
+		<id property="positionCode" column="POST_CODE" />
+		<id property="positionDescribe" column="POST_DESCRIBE" />
+		<id property="positionRank" column="POST_RANK" />
+	</resultMap>
+	
+	<select id="queryByUserId" parameterType="long" resultMap="positionResultMap">  
+		select post.* from security_position post
+			left join security_user_position userPost
+			on post.id=userPost.post_id
+			where userPost.user_id=#{userId}
+	</select>
+</mapper>

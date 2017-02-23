@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+[#include "../include/taglibs.html"/]
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>岗位信息列表</title> [#include "../include/base_js_css.html"/]
+<script type="text/javascript" src="${resource!}/js/position/position.js"></script>
+</head>
+<body style="visibility: visible;">
+     <div class="top_content">
+      <!-- 查询用户表单 -->
+      <div class="easyui-panel" style="border-bottom: 0; height: 80px;" data-options="iconCls:'icon-search',collapsible:true,border: false" fit="true">
+        <form id="post_search_form">
+        <table>
+          <tr>
+            <td class="search_form_tdlf"><label for="account">岗位名称</label></td>
+            <td class="search_form_tdr"><input name="positionName" id="positionName" type="text"/></td>
+          </tr>
+          <tr>
+            <td class="search_form_tdlf">&nbsp;</td>
+            <td colspan="5"  class="search_form_tdr">
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" id="search_form_submit">查询</a>
+              <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reset" id="search_form_reset">重置</a>
+            </td>
+          </tr>
+        </table>
+        </form>
+      </div>
+    </div>
+
+    <div id="post_grid" class="grid_content">
+      <!-- 用户信息列表GRID -->
+      <table id="postview" fit="true" class="easyui-datagrid">
+      </table>
+    </div>
+    <div id="post_add_dialog" class="easyui-dialog" title="岗位信息录入" style="height:400px;width:420px;padding:10px 20px" closed="true" buttons="#add-dlg-buttons">
+           <!-- 添加区域 -->
+      <div class="easyui-layout" style="border:none; height:400px;" fit="true">
+	     <!-- 节点内容 -->
+	     <form id="post_add_form" method="post" class="ftitle_form form_table" novalidate>
+	         <table cellpadding="5">
+                <tr>
+	                <td align="right">岗位名称:</td>
+	                <td><input class="easyui-validatebox" id="positionNameAdd" name="positionName" required="true"> </td>
+	            </tr>
+	            <tr>
+	                <td align="right">岗位编号:</td>
+	                <td>
+	                    <input name="positionCode" id="positionCodeAdd" class="easyui-validatebox" required="true">
+	               </td>
+	           </tr>
+	            <tr>
+	               <td align="right">岗位描述:</td>
+	               <td>
+	                 <input name="positionDescribe" id="positionDescribeAdd"  required=""false"" class="easyui-validatebox" validType="length[1,100]"/>
+	               </td>
+	             </tr>
+            </table>
+		</form>
+      </div>
+    </div><!-- end add -->
+    
+    <div id="add-dlg-buttons">
+      <a class="easyui-linkbutton" iconCls="icon-ok" onclick="submitAddForm()">保存</a> 
+      <a class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#add').dialog('close')">取消</a>
+    </div>
+    
+    
+    <div id="post_edit_dialog" class="easyui-dialog" title="岗位信息修改" class="ftitle_form form_table" style="height:400px;width:420px;padding:10px 20px" closed="true" buttons="#edit-dlg-buttons">
+           <!-- 添加区域 -->
+      <div class="easyui-layout" style="border:none; height:400px;" fit="true">
+	     <!-- 节点内容 -->
+	     <form id="post_edit_form" method="post" novalidate class="ftitle_form">
+	         <table cellpadding="5">
+	         	<input type="hidden" id="id" name="id">
+                <tr>
+	                <td align="right">岗位名称:</td>
+	                <td><input class="easyui-validatebox" id="positionName" name="positionName"  required="true"> </td>
+	            </tr>
+	            <tr>
+	                <td align="right">岗位编号:</td>
+	                <td>
+	                    <input name="positionCode" id="positionCode" class="easyui-validatebox" required="true">
+	               </td>
+	           </tr>
+	            <tr>
+	               <td align="right">岗位描述:</td>
+	               <td>
+	                 <input name="positionDescribe" id="positionDescribe"  required="false" class="easyui-validatebox" validType="length[1,100]"/>
+	               </td>
+	             </tr>
+            </table>
+		</form>
+      </div>
+    </div><!-- end add -->
+    <div id="edit-dlg-buttons">
+      <a class="easyui-linkbutton" iconCls="icon-ok" onclick="submitEditForm()">保存</a> 
+      <a class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#edit').dialog('close')">取消</a>
+    </div>
+</body>
+</html>

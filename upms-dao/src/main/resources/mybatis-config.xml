@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<settings>
+		<!-- changes from the defaults -->
+		<setting name="lazyLoadingEnabled" value="false" />
+		<setting name="cacheEnabled" value="false"/>
+		<setting name="callSettersOnNulls" value="true" />  		 
+	</settings>
+
+	<typeAliases>
+		<typeAlias alias="securityUser" type="com.hshc.upms.entity.security.User" />
+		<typeAlias alias="securityRole" type="com.hshc.upms.entity.security.Role" />
+		<typeAlias alias="securityUserRole" type="com.hshc.upms.entity.security.UserRole" />
+		<typeAlias alias="securityRolePermission" type="com.hshc.upms.entity.security.RolePermission" />
+		<typeAlias alias="securityPermission" type="com.hshc.upms.entity.security.Permission" />
+		<typeAlias alias="securitySystemModel" type="com.hshc.upms.entity.security.SystemModel" />
+		<typeAlias alias="securityResource" type="com.hshc.upms.entity.security.Resource" />
+		<typeAlias alias="securityOperationLog" type="com.hshc.upms.entity.system.OperationLog" />
+		<typeAlias alias="securityLoginSuccessLog" type="com.hshc.upms.entity.system.LoginSuccessLog" />
+		<typeAlias alias="securityLoginFailLog" type="com.hshc.upms.entity.system.LoginFailLog" />
+		<typeAlias alias="securityDepartment" type="com.hshc.upms.entity.security.Department" />
+		<typeAlias alias="securityDataPermission" type="com.hshc.upms.entity.security.DataPermission" />
+		<typeAlias alias="securityPosition" type="com.hshc.mdm.entity.security.SecurityPosition" />
+		<typeAlias alias="mstRegion" type="com.hshc.mdm.entity.mst.MstRegion" />
+		<typeAlias alias="mstOrganCompany" type="com.hshc.mdm.entity.mst.MstOrganCompany" />
+	</typeAliases>
+
+
+	<mappers>
+		<mapper resource="com/hshc/upms/dao/common/common.xml"/>
+	</mappers>
+	
+</configuration>
